@@ -56,7 +56,8 @@ https://fastapi.tiangolo.com/tutorial/query-params/
  pip install urllib
  pip install numpy
  pip install requests Pillow
-
+  pip install typing
+pip install python-multipart
 
 uvicorn api --reload
 ===

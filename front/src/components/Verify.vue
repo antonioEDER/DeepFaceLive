@@ -20,8 +20,8 @@
         <div>
           <q-card class="my-card" v-if="deepface">
             <div class="flex">
-              <img class="img q-ma-md" :src="storage + diretorio1.name">
-              <img class="img q-ma-md" :src="storage + diretorio2.name">
+              <img class="img q-ma-md" :src="img1">
+              <img class="img q-ma-md" :src="img2">
             </div>
 
             <div>
@@ -49,8 +49,10 @@ export default {
   name: 'PagVerify',
   data () {
     return {
-      diretorio1: {name: ""},
-      diretorio2: {name: ""},
+      diretorio1: { name: "" },
+      diretorio2: { name: "" },
+      img1: null,
+      img2: null,
       api: 'http://localhost:8000',
       storage: 'http://localhost:3000/',
       deepface: null,
@@ -70,7 +72,7 @@ export default {
 
       return str;
     },
-    convertTrueToLowerCase(text) {
+    convertTrueToLowerCase (text) {
       let regex = new RegExp("True", 'g');
       let replacedText = text.replace(regex, "true");
 
@@ -79,11 +81,26 @@ export default {
 
       return replacedText;
     },
+    convertAndInsertImage (file, name) {
+      const self = this
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var dataURL = e.target.result;
+        self[name] = dataURL;
+      };
+      reader.readAsDataURL(file);
+    },
     onSubmit () {
       this.submitting = true
       this.deepface = null
 
-      axios.get(`${this.api}/verify?url_image1=${this.storage + this.diretorio1.name}&url_image2=${this.storage + this.diretorio2.name}`)
+      const formData = new FormData();
+      formData.append('url_image1', this.diretorio1);
+      formData.append('url_image2', this.diretorio2);
+
+      const headers = { 'Content-Type': 'multipart/form-data' };
+
+      axios.post(`${this.api}/verify`, formData, { headers })
         .then((response) => {
           const stringFormat = this.convertQuotes(response.data)
           const jsonFormat = JSON.parse(this.convertTrueToLowerCase(stringFormat))
@@ -91,6 +108,8 @@ export default {
         })
         .finally(() => {
           this.submitting = false
+          this.convertAndInsertImage(this.diretorio1, "img1")
+          this.convertAndInsertImage(this.diretorio2, "img2")
         })
     }
   },
@@ -100,7 +119,7 @@ export default {
 <style scoped>
 .my-card {
   display: grid;
-  grid-template-columns:  1fr;
+  grid-template-columns: 1fr;
 }
 
 .img {

@@ -10,7 +10,7 @@
         </q-form>
         <div v-for="(face, index) in deepface" :key="index">
           <q-card class="my-card">
-            <img class="img" :src="this.storage + this.diretorio.name">
+            <img class="img" :src="img">
 
             <div>
               <q-card-section>
@@ -70,6 +70,7 @@ export default {
   data () {
     return {
       diretorio: {},
+      img: null,
       api: 'http://localhost:8000',
       storage: 'http://localhost:3000/',
       deepface: null,
@@ -132,15 +133,31 @@ export default {
       }
       return dominant
     },
+    convertAndInsertImage (file) {
+      const self = this
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var dataURL = e.target.result;
+        self.img = dataURL;
+      };
+      reader.readAsDataURL(file);
+    },
     onSubmit () {
       this.submitting = true
       this.deepface = []
-      axios.get(`${this.api}/analyze?url_image=${this.storage + this.diretorio.name}`)
+
+      const formData = new FormData();
+      formData.append('file', this.diretorio);
+
+      const headers = { 'Content-Type': 'multipart/form-data' };
+        
+      axios.post(`${this.api}/analyze`, formData, { headers })
         .then((response) => {
           this.deepface = response.data
         })
         .finally(() => {
           this.submitting = false
+          this.convertAndInsertImage(this.diretorio)
         })
     }
   },

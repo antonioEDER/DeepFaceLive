@@ -1,15 +1,23 @@
 #cmd: uvicorn api:app --reload
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
+
 from fastapi.middleware.cors import CORSMiddleware
+
 from deepface import DeepFace
-import json
 
 import cv2
+
 import requests
+
 from PIL import Image
+
 from io import BytesIO
+
 import os
+
+from typing_extensions import Annotated
+
 
 app = FastAPI()
 app.add_middleware(
@@ -21,37 +29,25 @@ app.add_middleware(
 def hello_root():
     return {"message": "Bem vindo"}
  
-@app.get("/analyze")
-def analyze_face(url_image):
-    file = "faceimage.png"
-    
-    response = requests.get(url_image)
-    image = Image.open(BytesIO(response.content))
-    image.save(file)
-
-    imread = cv2.imread(file)
-    resultado = DeepFace.analyze(imread, actions=("age", "emotion", "gender", "race"))
-
-    os.remove(file)
-
+@app.post("/analyze")
+async def analyze_face(file: UploadFile = File(...)):
+    with open(file.filename, "wb") as f:
+        f.write(await file.read())
+        resultado = DeepFace.analyze(file.filename, actions=("age", "emotion", "gender", "race"))
+        os.remove(file.filename)
     return resultado
 
-@app.get("/verify")
-def analyze_face(url_image1,url_image2):
-    file1 = "faceimage1.png"
-    file2 = "faceimage2.png"
-    
-    response1 = requests.get(url_image1)
-    image1 = Image.open(BytesIO(response1.content))
-    image1.save(file1)
+@app.post("/verify")
+async def analyze_face(url_image1: UploadFile = File(...), url_image2: UploadFile = File(...)):
+    with open(url_image1.filename, "wb") as f1:
+        f1.write(await url_image1.read())
 
-    response2 = requests.get(url_image2)
-    image2 = Image.open(BytesIO(response2.content))
-    image2.save(file2)
+    with open(url_image2.filename, "wb") as f2:
+        f2.write(await url_image2.read())
 
-    resultado = DeepFace.verify(img1_path = file1, img2_path = file2)
+    resultado = DeepFace.verify(img1_path = url_image1.filename, img2_path = url_image2.filename)
 
-    os.remove(file1)
-    os.remove(file2)
+    os.remove(url_image1.filename)
+    os.remove(url_image2.filename)
 
     return str(resultado)
