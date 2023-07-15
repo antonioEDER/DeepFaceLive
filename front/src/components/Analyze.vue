@@ -10,7 +10,11 @@
         </q-form>
         <div v-for="(face, index) in deepface" :key="index">
           <q-card class="my-card">
-            <img class="img" :src="img">
+
+            <div id="imageContainer">
+              <img id="image" class="img" :src="img">
+              <div id="highlight"></div>
+            </div>
 
             <div>
               <q-card-section>
@@ -142,6 +146,14 @@ export default {
       };
       reader.readAsDataURL(file);
     },
+    setDimensionsImg () {
+      var highlight = document.getElementById('highlight');
+      var highlightData = this.deepface[0].region;
+      highlight.style.left = highlightData.x + 'px';
+      highlight.style.top = highlightData.y + 'px';
+      highlight.style.width = highlightData.w + 'px';
+      highlight.style.height = highlightData.h + 'px';
+    },
     onSubmit () {
       this.submitting = true
       this.deepface = []
@@ -154,6 +166,9 @@ export default {
       axios.post(`${this.api}/analyze`, formData, { headers })
         .then((response) => {
           this.deepface = response.data
+          setTimeout(() => {
+            this.setDimensionsImg()
+          }, 1000);
         })
         .finally(() => {
           this.submitting = false
@@ -167,10 +182,20 @@ export default {
 <style scoped>
 .my-card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 400px 1fr;
 }
 .img {
   width: auto;
   height: auto;
+}
+
+#imageContainer {
+  position: relative;
+  display: inline-block;
+}
+    
+#highlight {
+  position: absolute;
+  border: 4px solid red;
 }
 </style>

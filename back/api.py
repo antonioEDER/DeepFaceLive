@@ -6,14 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from deepface import DeepFace
 
-import cv2
-
-import requests
-
-from PIL import Image
-
-from io import BytesIO
-
 import os
 
 from typing_extensions import Annotated
@@ -45,7 +37,7 @@ async def analyze_face(url_image1: UploadFile = File(...), url_image2: UploadFil
     with open(url_image2.filename, "wb") as f2:
         f2.write(await url_image2.read())
 
-    resultado = DeepFace.verify(img1_path = url_image1.filename, img2_path = url_image2.filename)
+    resultado = DeepFace.verify(img1_path = url_image1.filename, img2_path = url_image2.filename, model_name='Facenet')
 
     os.remove(url_image1.filename)
     os.remove(url_image2.filename)

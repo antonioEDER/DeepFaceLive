@@ -20,8 +20,14 @@
         <div>
           <q-card class="my-card" v-if="deepface">
             <div class="flex">
-              <img class="img q-ma-md" :src="img1">
-              <img class="img q-ma-md" :src="img2">
+              <div id="imageContainer1">
+                <img id="image1" class="img" :src="img1">
+                <div id="highlight1"></div>
+              </div>
+              <div id="imageContainer2">
+                <img id="image2" class="img" :src="img2">
+                <div id="highlight2"></div>
+              </div>
             </div>
 
             <div>
@@ -86,9 +92,19 @@ export default {
       var reader = new FileReader();
       reader.onload = function (e) {
         var dataURL = e.target.result;
-        self[name] = dataURL;
+        self[`img${name}`] = dataURL;
+        self.setDimensionsImg(`highlight${name}`, `img${name}`)
       };
       reader.readAsDataURL(file);
+    },
+    setDimensionsImg (idElement, faceArea) {
+      var highlight = document.getElementById(idElement);
+      var highlightData = { ...this.deepface.facial_areas[faceArea] };
+      
+      highlight.style.left = highlightData.x + 'px';
+      highlight.style.top = highlightData.y + 'px';
+      highlight.style.width = highlightData.w + 'px';
+      highlight.style.height = highlightData.h + 'px';
     },
     onSubmit () {
       this.submitting = true
@@ -105,11 +121,10 @@ export default {
           const stringFormat = this.convertQuotes(response.data)
           const jsonFormat = JSON.parse(this.convertTrueToLowerCase(stringFormat))
           this.deepface = jsonFormat;
-        })
-        .finally(() => {
+          console.log('this.deepface ', this.deepface );
+          this.convertAndInsertImage(this.diretorio1, "1")
+          this.convertAndInsertImage(this.diretorio2, "2")
           this.submitting = false
-          this.convertAndInsertImage(this.diretorio1, "img1")
-          this.convertAndInsertImage(this.diretorio2, "img2")
         })
     }
   },
@@ -121,9 +136,19 @@ export default {
   display: grid;
   grid-template-columns: 1fr;
 }
-
 .img {
-  width: min-content;
-  height: 19rem;
+  width: auto;
+  height: auto;
+}
+
+
+#imageContainer1, #imageContainer2 {
+  position: relative;
+  display: inline-block;
+}
+    
+#highlight1, #highlight2 {
+  position: absolute;
+  border: 4px solid red;
 }
 </style>
