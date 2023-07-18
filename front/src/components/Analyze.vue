@@ -182,7 +182,7 @@ export default {
 <style scoped>
 .my-card {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 500px 1fr;
 }
 .img {
   width: auto;

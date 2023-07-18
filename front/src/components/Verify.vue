@@ -111,8 +111,8 @@ export default {
       this.deepface = null
 
       const formData = new FormData();
-      formData.append('url_image1', this.diretorio1);
-      formData.append('url_image2', this.diretorio2);
+      formData.append('image1', this.diretorio1);
+      formData.append('image2', this.diretorio2);
 
       const headers = { 'Content-Type': 'multipart/form-data' };
 
