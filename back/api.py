@@ -12,8 +12,6 @@ import json
 
 import numpy as np
 
-from typing_extensions import Annotated
-
 def serialize(obj):
     if isinstance(obj, np.bool_):
         return bool(obj)
