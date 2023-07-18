@@ -66,27 +66,6 @@ export default {
     }
   },
   methods: {
-    convertQuotes (str) {
-      // Replace double quotes with a placeholder
-      str = str.replace(/"/g, '###DOUBLE_QUOTE###');
-
-      // Replace single quotes with double quotes
-      str = str.replace(/'/g, '"');
-
-      // Replace the placeholder with single quotes
-      str = str.replace(/###DOUBLE_QUOTE###/g, "'");
-
-      return str;
-    },
-    convertTrueToLowerCase (text) {
-      let regex = new RegExp("True", 'g');
-      let replacedText = text.replace(regex, "true");
-
-      regex = new RegExp("False", 'g');
-      replacedText = replacedText.replace(regex, "false");
-
-      return replacedText;
-    },
     convertAndInsertImage (file, name) {
       const self = this
       var reader = new FileReader();
@@ -118,10 +97,7 @@ export default {
 
       axios.post(`${this.api}/verify`, formData, { headers })
         .then((response) => {
-          const stringFormat = this.convertQuotes(response.data)
-          const jsonFormat = JSON.parse(this.convertTrueToLowerCase(stringFormat))
-          this.deepface = jsonFormat;
-          console.log('this.deepface ', this.deepface );
+          this.deepface = response.data;
           this.convertAndInsertImage(this.diretorio1, "1")
           this.convertAndInsertImage(this.diretorio2, "2")
           this.submitting = false
