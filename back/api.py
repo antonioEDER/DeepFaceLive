@@ -1,15 +1,10 @@
 #cmd: uvicorn api:app --reload
 
-from fastapi import FastAPI, File, UploadFile
-
-from fastapi.middleware.cors import CORSMiddleware
-
-from deepface import DeepFace
-
 import os
-
 import json
-
+from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from deepface import DeepFace
 import numpy as np
 
 def serialize(obj):
@@ -30,12 +25,12 @@ def hello_root():
  
 @app.post("/analyze")
 async def analyze_face(file: UploadFile = File(...)):
+
     with open(file.filename, "wb") as f:
         f.write(await file.read())
-        #mtcnn
-        #ssd
         resultado = DeepFace.analyze(file.filename, actions=("age", "emotion", "gender", "race"), detector_backend='mtcnn')
         os.remove(file.filename)
+        
     return resultado
 
 @app.post("/verify")
@@ -46,8 +41,6 @@ async def analyze_face(image1: UploadFile = File(...), image2: UploadFile = File
     with open(image2.filename, "wb") as f2:
         f2.write(await image2.read())
 
-    #Facenet
-    #DeepID
     resultado = DeepFace.verify(img1_path = image1.filename, img2_path = image2.filename, model_name='Facenet')
 
     os.remove(image1.filename)

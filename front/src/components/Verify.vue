@@ -60,7 +60,6 @@ export default {
       img1: null,
       img2: null,
       api: 'http://localhost:8000',
-      storage: 'http://localhost:3000/',
       deepface: null,
       submitting: false,
     }
@@ -87,7 +86,7 @@ export default {
     },
     onSubmit () {
       this.submitting = true
-      this.deepface = null
+      this.deepface = []
 
       const formData = new FormData();
       formData.append('image1', this.diretorio1);
@@ -98,7 +97,9 @@ export default {
       axios.post(`${this.api}/verify`, formData, { headers })
         .then((response) => {
           this.deepface = response.data;
+
           this.convertAndInsertImage(this.diretorio1, "1")
+          
           this.convertAndInsertImage(this.diretorio2, "2")
           this.submitting = false
         })

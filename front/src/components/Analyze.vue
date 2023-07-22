@@ -2,12 +2,15 @@
   <div class="q-ma-lg">
     <div class="q-pa-md">
       <div class="q-gutter-md">
+        
         <q-form @submit="onSubmit">
           <label for="diretorio">Selecione uma foto</label>
+
           <q-file required @input="() => deepface = []" filled v-model="diretorio" label="Diretório" />
 
           <q-btn :loading="submitting" color="green" class="q-mt-md" type="submit" label="Enviar" />
         </q-form>
+        
         <div v-for="(face, index) in deepface" :key="index">
           <q-card class="my-card">
 
@@ -28,13 +31,14 @@
 
               <q-card-section class="q-pt-none">
                 <div class="text-bold">Emoções</div>
-                <div>Nervosa: {{ parseFloat(face.emotion.angry).toFixed(1) }}%</div>
+                <div>Nervoso: {{ parseFloat(face.emotion.angry).toFixed(1) }}%</div>
                 <div>Desgosto: {{ parseFloat(face.emotion.disgust).toFixed(1) }}%</div>
                 <div>Medo: {{ parseFloat(face.emotion.fear).toFixed(1) }}%</div>
                 <div>Feliz: {{ parseFloat(face.emotion.happy).toFixed(1) }}%</div>
                 <div>Triste: {{ parseFloat(face.emotion.sad).toFixed(1) }}%</div>
                 <div>Surpreso: {{ parseFloat(face.emotion.surprise).toFixed(1) }}%</div>
                 <div>Neutro: {{ parseFloat(face.emotion.neutral).toFixed(1) }}%</div>
+
                 <div class="text-bold text-red">Predominância: {{ dominantEmotion(face.dominant_emotion) }} </div>
               </q-card-section>
 
@@ -76,7 +80,6 @@ export default {
       diretorio: {},
       img: null,
       api: 'http://localhost:8000',
-      storage: 'http://localhost:3000/',
       deepface: null,
       submitting: false,
     }
@@ -86,7 +89,7 @@ export default {
       let dominant = ""
       switch (emotion) {
         case "angry":
-          dominant = "Nervosa"
+          dominant = "Nervoso"
           break;
         case "disgust":
           dominant = "Desgosto"
@@ -140,15 +143,20 @@ export default {
     convertAndInsertImage (file) {
       const self = this
       var reader = new FileReader();
-      reader.onload = function(e) {
+
+      reader.readAsDataURL(file);
+
+      reader.onload = function (e) {
         var dataURL = e.target.result;
         self.img = dataURL;
       };
-      reader.readAsDataURL(file);
+
     },
     setDimensionsImg () {
       var highlight = document.getElementById('highlight');
+
       var highlightData = this.deepface[0].region;
+
       highlight.style.left = highlightData.x + 'px';
       highlight.style.top = highlightData.y + 'px';
       highlight.style.width = highlightData.w + 'px';
@@ -156,6 +164,7 @@ export default {
     },
     onSubmit () {
       this.submitting = true
+
       this.deepface = []
 
       const formData = new FormData();

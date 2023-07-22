@@ -11,13 +11,14 @@
           align="justify"
           narrow-indicator
         >
-          <q-tab name="analyse" label="Analisar" ac/>
+          <q-tab name="analyse" label="Analisar"/>
           <q-tab name="verify" label="Verificar" />
         </q-tabs>
 
         <q-separator />
 
         <q-tab-panels v-model="tab" animated>
+          
           <q-tab-panel name="analyse">
             <Analyze />
           </q-tab-panel>
