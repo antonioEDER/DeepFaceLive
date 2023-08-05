@@ -1,11 +1,12 @@
 
 import os
 import json
+
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+
 from deepface import DeepFace
-from deepface.commons import functions
-from typing import List
+
 import numpy as np
 
 class DeepFaceAnalyzer:
@@ -42,7 +43,7 @@ deep_face_analyzer = DeepFaceAnalyzer()
 face_verifier = FaceVerifier()
 json_serializer = JsonSerializable()
 
-@app.get("/")
+app.get("/")
 def hello_root():
     return {"message": "Bem vindo"}
 
