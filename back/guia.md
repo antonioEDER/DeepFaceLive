@@ -1,4 +1,5 @@
-# Projeto DeepFace Py
+# Guia de instalação
+
 - Doc. Instalação Py (https://www.python.org/downloads/)
 - GIT (https://github.com/serengil/deepface/tree/master)
 - Documentação (https://pypi.org/project/deepface/)
