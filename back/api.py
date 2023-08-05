@@ -34,6 +34,7 @@ def serialize(obj):
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*']
