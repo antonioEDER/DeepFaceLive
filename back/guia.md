@@ -1,7 +1,7 @@
 # Projeto DeepFace Py
-(Doc. Instalação Py) https://www.python.org/downloads/
-(GIT) ->https://github.com/serengil/deepface/tree/master
-(Documentação) -> https://pypi.org/project/deepface/
+- Doc. Instalação Py (https://www.python.org/downloads/)
+- GIT (https://github.com/serengil/deepface/tree/master)
+- Documentação (https://pypi.org/project/deepface/)
 
 ### Instalar o Python p/ MAC:
 ```
